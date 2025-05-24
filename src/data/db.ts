@@ -1,5 +1,10 @@
-import { concepts, conceptLinks } from './data';
 import type { ConceptNode, ConceptLink } from './concepts';
+
+// Default empty data
+const defaultData = {
+  concepts: [] as ConceptNode[],
+  conceptLinks: [] as ConceptLink[]
+};
 
 let db: IDBDatabase;
 const DB_NAME = 'conceptsDB';
@@ -32,9 +37,26 @@ const dbInit = new Promise<void>((resolve, reject) => {
   };
 });
 
-// Initialize with sample data
+// Load data from JSON files
+async function loadData() {
+  try {
+    const conceptsResponse = await fetch('/src/data/concepts.json');
+    const linksResponse = await fetch('/src/data/links.json');
+    const conceptsData = await conceptsResponse.json();
+    const linksData = await linksResponse.json();
+    return { 
+      concepts: conceptsData.concepts as ConceptNode[],
+      conceptLinks: linksData.conceptLinks as ConceptLink[]
+    };
+  } catch (error) {
+    console.error('Error loading data from JSON files:', error);
+    return defaultData;
+  }
+}
+
+// Initialize with data from JSON files
 const initSampleData = async () => {
-  console.log('Initializing sample data...');
+  console.log('Initializing data from JSON files...');
   
   // Check if data exists
   const conceptStore = db.transaction(CONCEPTS_STORE, 'readonly').objectStore(CONCEPTS_STORE);
@@ -44,14 +66,16 @@ const initSampleData = async () => {
   });
 
   if (count === 0) {
-    console.log('No existing data, adding sample data...');
+    console.log('No existing data, adding data from JSON files...');
     
+    const { concepts, conceptLinks } = await loadData();
+
     // Add concepts
     await new Promise<void>((resolve, reject) => {
       const transaction = db.transaction(CONCEPTS_STORE, 'readwrite');
       const store = transaction.objectStore(CONCEPTS_STORE);
       
-      concepts.forEach(concept => {
+      concepts.forEach((concept: ConceptNode) => {
         console.log('Adding concept:', concept);
         store.add(concept);
       });
@@ -65,7 +89,7 @@ const initSampleData = async () => {
       const transaction = db.transaction(LINKS_STORE, 'readwrite');
       const store = transaction.objectStore(LINKS_STORE);
       
-      conceptLinks.forEach(link => {
+      conceptLinks.forEach((link: ConceptLink) => {
         console.log('Adding link:', link);
         store.add(link);
       });
@@ -74,13 +98,13 @@ const initSampleData = async () => {
       transaction.onerror = () => reject(transaction.error);
     });
 
-    console.log('Sample data initialization complete');
+    console.log('Data initialization complete');
   } else {
     console.log('Data already exists, skipping initialization');
   }
 };
 
-// Initialize database and sample data
+// Initialize database and data
 dbInit.then(initSampleData).catch(console.error);
 
 // Database operations
@@ -183,6 +207,21 @@ export const dbOperations = {
       
       request.onsuccess = () => resolve();
       request.onerror = () => reject(request.error);
+    });
+  },
+
+  clearDatabase: async (): Promise<void> => {
+    await dbInit;
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([CONCEPTS_STORE, LINKS_STORE], 'readwrite');
+      const conceptStore = transaction.objectStore(CONCEPTS_STORE);
+      const linkStore = transaction.objectStore(LINKS_STORE);
+      
+      conceptStore.clear();
+      linkStore.clear();
+      
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
     });
   }
 }; 

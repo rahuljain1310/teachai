@@ -79,10 +79,10 @@ export const ConceptGraph = ({ onNodeClick }: ConceptGraphProps) => {
 
     // Create the force simulation
     const simulation = d3.forceSimulation<SimNode>(concepts as SimNode[])
-      .force('link', d3.forceLink<SimNode, SimLink>(conceptLinks as SimLink[]).id(d => d.id).distance(150))
-      .force('charge', d3.forceManyBody().strength(-1000))
+      .force('link', d3.forceLink<SimNode, SimLink>(conceptLinks as SimLink[]).id(d => d.id).distance(100))
+      .force('charge', d3.forceManyBody().strength(-500))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(80));
+      .force('collision', d3.forceCollide().radius(50));
 
     // Create the links
     const links = g.selectAll('.link')
@@ -93,6 +93,25 @@ export const ConceptGraph = ({ onNodeClick }: ConceptGraphProps) => {
       .style('stroke', '#999')
       .style('stroke-opacity', 0.6)
       .style('stroke-width', 2);
+
+    // Add arrow markers for directed edges
+    svg.append('defs').selectAll('marker')
+      .data(['end'])
+      .enter()
+      .append('marker')
+      .attr('id', 'arrow')
+      .attr('viewBox', '0 -5 10 10')
+      .attr('refX', 45) // Adjust this value to position the arrow near the target node
+      .attr('refY', 0)
+      .attr('markerWidth', 6)
+      .attr('markerHeight', 6)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', 'M0,-5L10,0L0,5')
+      .style('fill', '#999');
+
+    // Update links to use the arrow marker
+    links.attr('marker-end', 'url(#arrow)');
 
     // Create color scale for categories
     const colorScale = d3.scaleOrdinal<string>()

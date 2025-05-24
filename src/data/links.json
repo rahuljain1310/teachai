@@ -1,0 +1,204 @@
+{
+  "conceptLinks": [
+    {
+      "source": "equations",
+      "target": "algebra"
+    },
+    {
+      "source": "algebra",
+      "target": "polynomials"
+    },
+    {
+      "source": "algebra",
+      "target": "matrices"
+    },
+    {
+      "source": "matrices",
+      "target": "linear_algebra"
+    },
+    {
+      "source": "algebra",
+      "target": "calculus"
+    },
+    {
+      "source": "limits",
+      "target": "derivatives"
+    },
+    {
+      "source": "derivatives",
+      "target": "integrals"
+    },
+    {
+      "source": "polygons",
+      "target": "geometry"
+    },
+    {
+      "source": "circles",
+      "target": "geometry"
+    },
+    {
+      "source": "geometry",
+      "target": "trigonometry"
+    },
+    {
+      "source": "trigonometry",
+      "target": "sine_cosine"
+    },
+    {
+      "source": "probability",
+      "target": "statistics"
+    },
+    {
+      "source": "linear_algebra",
+      "target": "quantum_mechanics"
+    },
+    {
+      "source": "statistics",
+      "target": "thermodynamics"
+    },
+    {
+      "source": "kinematics",
+      "target": "mechanics"
+    },
+    {
+      "source": "mechanics",
+      "target": "dynamics"
+    },
+    {
+      "source": "mechanics",
+      "target": "thermodynamics"
+    },
+    {
+      "source": "heat_transfer",
+      "target": "thermodynamics"
+    },
+    {
+      "source": "thermodynamics",
+      "target": "entropy"
+    },
+    {
+      "source": "electric_fields",
+      "target": "electromagnetism"
+    },
+    {
+      "source": "magnetic_fields",
+      "target": "electromagnetism"
+    },
+    {
+      "source": "electromagnetism",
+      "target": "optics"
+    },
+    {
+      "source": "reflection",
+      "target": "optics"
+    },
+    {
+      "source": "refraction",
+      "target": "optics"
+    },
+    {
+      "source": "optics",
+      "target": "quantum_mechanics"
+    },
+    {
+      "source": "wave_functions",
+      "target": "quantum_mechanics"
+    },
+    {
+      "source": "uncertainty",
+      "target": "quantum_mechanics"
+    },
+    {
+      "source": "mechanics",
+      "target": "relativity"
+    },
+    {
+      "source": "electromagnetism",
+      "target": "relativity"
+    },
+    {
+      "source": "electron_config",
+      "target": "atomic_structure"
+    },
+    {
+      "source": "atomic_structure",
+      "target": "nuclear_chemistry"
+    },
+    {
+      "source": "atomic_structure",
+      "target": "chemical_bonding"
+    },
+    {
+      "source": "covalent_bonds",
+      "target": "chemical_bonding"
+    },
+    {
+      "source": "ionic_bonds",
+      "target": "chemical_bonding"
+    },
+    {
+      "source": "chemical_bonding",
+      "target": "organic_chemistry"
+    },
+    {
+      "source": "chemical_bonding",
+      "target": "inorganic_chemistry"
+    },
+    {
+      "source": "functional_groups",
+      "target": "organic_chemistry"
+    },
+    {
+      "source": "stereochemistry",
+      "target": "organic_chemistry"
+    },
+    {
+      "source": "coordination_chemistry",
+      "target": "inorganic_chemistry"
+    },
+    {
+      "source": "reaction_kinetics",
+      "target": "thermochemistry"
+    },
+    {
+      "source": "organic_chemistry",
+      "target": "biochemistry"
+    },
+    {
+      "source": "inorganic_chemistry",
+      "target": "biochemistry"
+    },
+    {
+      "source": "metabolism",
+      "target": "biochemistry"
+    },
+    {
+      "source": "enzymes",
+      "target": "biochemistry"
+    },
+    {
+      "source": "calculus",
+      "target": "kinematics"
+    },
+    {
+      "source": "linear_algebra",
+      "target": "wave_functions"
+    },
+    {
+      "source": "statistics",
+      "target": "reaction_kinetics"
+    },
+    {
+      "source": "thermodynamics",
+      "target": "reaction_kinetics"
+    },
+    {
+      "source": "quantum_mechanics",
+      "target": "electron_config"
+    },
+    {
+      "source": "electromagnetism",
+      "target": "chemical_bonding"
+    }
+  ]
+}
