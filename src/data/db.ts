@@ -6,37 +6,6 @@ const defaultData = {
   conceptLinks: [] as ConceptLink[]
 };
 
-let db: IDBDatabase;
-const DB_NAME = 'conceptsDB';
-const CONCEPTS_STORE = 'concepts';
-const LINKS_STORE = 'links';
-
-// Initialize IndexedDB
-const dbInit = new Promise<void>((resolve, reject) => {
-  const request = indexedDB.open(DB_NAME, 1);
-
-  request.onerror = () => reject(request.error);
-  
-  request.onsuccess = () => {
-    db = request.result;
-    resolve();
-  };
-
-  request.onupgradeneeded = (event) => {
-    const db = (event.target as IDBOpenDBRequest).result;
-    
-    if (!db.objectStoreNames.contains(CONCEPTS_STORE)) {
-      db.createObjectStore(CONCEPTS_STORE, { keyPath: 'id' });
-    }
-    
-    if (!db.objectStoreNames.contains(LINKS_STORE)) {
-      const linkStore = db.createObjectStore(LINKS_STORE, { keyPath: ['source', 'target'] });
-      linkStore.createIndex('by_source', 'source');
-      linkStore.createIndex('by_target', 'target');
-    }
-  };
-});
-
 // Load data from JSON files
 async function loadData() {
   try {
@@ -54,174 +23,37 @@ async function loadData() {
   }
 }
 
-// Initialize with data from JSON files
-const initSampleData = async () => {
-  console.log('Initializing data from JSON files...');
-  
-  // Check if data exists
-  const conceptStore = db.transaction(CONCEPTS_STORE, 'readonly').objectStore(CONCEPTS_STORE);
-  const countRequest = conceptStore.count();
-  const count = await new Promise<number>((resolve) => {
-    countRequest.onsuccess = () => resolve(countRequest.result);
-  });
-
-  if (count === 0) {
-    console.log('No existing data, adding data from JSON files...');
-    
-    const { concepts, conceptLinks } = await loadData();
-
-    // Add concepts
-    await new Promise<void>((resolve, reject) => {
-      const transaction = db.transaction(CONCEPTS_STORE, 'readwrite');
-      const store = transaction.objectStore(CONCEPTS_STORE);
-      
-      concepts.forEach((concept: ConceptNode) => {
-        console.log('Adding concept:', concept);
-        store.add(concept);
-      });
-      
-      transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error);
-    });
-
-    // Add links
-    await new Promise<void>((resolve, reject) => {
-      const transaction = db.transaction(LINKS_STORE, 'readwrite');
-      const store = transaction.objectStore(LINKS_STORE);
-      
-      conceptLinks.forEach((link: ConceptLink) => {
-        console.log('Adding link:', link);
-        store.add(link);
-      });
-      
-      transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error);
-    });
-
-    console.log('Data initialization complete');
-  } else {
-    console.log('Data already exists, skipping initialization');
-  }
-};
-
-// Initialize database and data
-dbInit.then(initSampleData).catch(console.error);
-
 // Database operations
 export const dbOperations = {
   getAllConcepts: async (): Promise<ConceptNode[]> => {
-    await dbInit;
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(CONCEPTS_STORE, 'readonly');
-      const store = transaction.objectStore(CONCEPTS_STORE);
-      const request = store.getAll();
-      
-      request.onsuccess = () => {
-        console.log('Retrieved concepts:', request.result);
-        resolve(request.result);
-      };
-      request.onerror = () => reject(request.error);
-    });
+    const { concepts } = await loadData();
+    console.log('Retrieved concepts:', concepts);
+    return concepts;
   },
 
   getAllLinks: async (): Promise<ConceptLink[]> => {
-    await dbInit;
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(LINKS_STORE, 'readonly');
-      const store = transaction.objectStore(LINKS_STORE);
-      const request = store.getAll();
-      
-      request.onsuccess = () => {
-        console.log('Retrieved links:', request.result);
-        resolve(request.result);
-      };
-      request.onerror = () => reject(request.error);
-    });
+    const { conceptLinks } = await loadData();
+    console.log('Retrieved links:', conceptLinks);
+    return conceptLinks;
   },
 
-  addConcept: async (concept: ConceptNode): Promise<void> => {
-    await dbInit;
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(CONCEPTS_STORE, 'readwrite');
-      const store = transaction.objectStore(CONCEPTS_STORE);
-      const request = store.add(concept);
-      
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
+  addConcept: async (): Promise<void> => {
+    console.warn('Adding concepts is not supported in read-only JSON mode');
   },
 
-  removeConcept: async (id: string): Promise<void> => {
-    await dbInit;
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([CONCEPTS_STORE, LINKS_STORE], 'readwrite');
-      const conceptStore = transaction.objectStore(CONCEPTS_STORE);
-      const linkStore = transaction.objectStore(LINKS_STORE);
-      
-      // Delete the concept
-      conceptStore.delete(id);
-      
-      // Delete related links
-      const sourceIndex = linkStore.index('by_source');
-      const targetIndex = linkStore.index('by_target');
-      
-      sourceIndex.openCursor(id).onsuccess = (event) => {
-        const cursor = (event.target as IDBRequest).result;
-        if (cursor) {
-          cursor.delete();
-          cursor.continue();
-        }
-      };
-      
-      targetIndex.openCursor(id).onsuccess = (event) => {
-        const cursor = (event.target as IDBRequest).result;
-        if (cursor) {
-          cursor.delete();
-          cursor.continue();
-        }
-      };
-      
-      transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error);
-    });
+  removeConcept: async (): Promise<void> => {
+    console.warn('Removing concepts is not supported in read-only JSON mode');
   },
 
-  addLink: async (link: ConceptLink): Promise<void> => {
-    await dbInit;
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(LINKS_STORE, 'readwrite');
-      const store = transaction.objectStore(LINKS_STORE);
-      const request = store.add(link);
-      
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
+  addLink: async (): Promise<void> => {
+    console.warn('Adding links is not supported in read-only JSON mode');
   },
 
-  removeLink: async (source: string, target: string): Promise<void> => {
-    await dbInit;
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(LINKS_STORE, 'readwrite');
-      const store = transaction.objectStore(LINKS_STORE);
-      const request = store.delete([source, target]);
-      
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
+  removeLink: async (): Promise<void> => {
+    console.warn('Removing links is not supported in read-only JSON mode');
   },
 
   clearDatabase: async (): Promise<void> => {
-    await dbInit;
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([CONCEPTS_STORE, LINKS_STORE], 'readwrite');
-      const conceptStore = transaction.objectStore(CONCEPTS_STORE);
-      const linkStore = transaction.objectStore(LINKS_STORE);
-      
-      conceptStore.clear();
-      linkStore.clear();
-      
-      transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error);
-    });
+    console.warn('Clearing database is not supported in read-only JSON mode');
   }
 }; 
