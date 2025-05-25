@@ -1,4 +1,6 @@
 import type { ConceptNode, ConceptLink } from './concepts';
+import conceptsData from './concepts.json';
+import linksData from './links.json';
 
 // Default empty data
 const defaultData = {
@@ -9,10 +11,6 @@ const defaultData = {
 // Load data from JSON files
 async function loadData() {
   try {
-    const conceptsResponse = await fetch('/src/data/concepts.json');
-    const linksResponse = await fetch('/src/data/links.json');
-    const conceptsData = await conceptsResponse.json();
-    const linksData = await linksResponse.json();
     return { 
       concepts: conceptsData.concepts as ConceptNode[],
       conceptLinks: linksData.conceptLinks as ConceptLink[]
